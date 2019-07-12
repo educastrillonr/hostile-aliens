@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hostile Aliens</title>
+</head>
+<body>
+    <button onclick="shootShip()" id = "shoot-btn">Shoot!</button>
+    <button onclick="reset()" id = "reset-btn">reset</button>
+    <ul id = "ships-on-show">
+</ul>
+</body>
+<script>
+    const shootBtn = document.getElementById("shoot-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const fleetHTML = document.getElementById("ships-on-show");
+    resetBtn.disabled = true;
+
+    class Ship {
+        constructor(status, hitPoints, weakness){
+            this._status = status;
+            this._hitPoints = hitPoints;
+            this._weakness = weakness;
+        }
+        get status() { return this._status; }
+        get hitPoints() { return this._hitPoints; }
+        set status(newStatus) { this._status = newStatus; }
+        getHit() { this._hitPoints - this._weakness <= 0 ? this._hitPoints = 0 : this._hitPoints -= this._weakness; }
+    }
+
+    const gameStart = () => {
+        createFleet();
+        displayFleet(fleet);
+    }
+
+    const createFleet = () => {
+        const motherShip = new Ship("alive", 100, 9);
+        fleet.push(motherShip);
+        for (let index = 1; index < 14; index++) {
+            index <= 5 ? fleet.push(new Ship("alive", 80, 10)) : fleet.push(new Ship("alive", 45, 12));  
+        }
+    }
+    
+    const getRandomShip = () => {
+        return Math.floor(Math.random() * fleet.length);
+    }
+    
+    const shootShip = () => {
+        let randomShip = getRandomShip();
+        while (fleet[randomShip].status == "dead") {
+            randomShip = getRandomShip();
+        }
+        fleet[randomShip].getHit();
+        if (isDefeated(randomShip) ) {kill(randomShip);} 
+        displayFleet(fleet);
+    }
+    
+    const isDefeated = (position) => { 
+        return fleet[position].hitPoints === 0; 
+    }
+    
+    const kill = (position) => {
+        fleet[position].status = "dead";
+        if (position === 0) endGame();
+    }
+    
+    const endGame = () => {
+        shootBtn.disabled = true;
+        resetBtn.disabled = false;
+    } 
+    
+    const reset = () => {
+        shootBtn.disabled = false;
+        resetBtn.disabled = true;
+        fleet = [];
+        fleetHTML.innerHTML = "";
+        gameStart();
+    }
+    
+    const displayFleet = (fleet) => {
+        fleetHTML.innerHTML = `<li>Mother Ship: ${fleet[0].hitPoints} Hit Points. ${fleet[0].status}</li>
+                                <li>Defence Ship: ${fleet[1].hitPoints} Hit Points. ${fleet[1].status}</li>
+                                <li>Defence Ship: ${fleet[2].hitPoints} Hit Points. ${fleet[2].status}</li>
+                                <li>Defence Ship: ${fleet[3].hitPoints} Hit Points. ${fleet[3].status}</li>
+                                <li>Defence Ship: ${fleet[4].hitPoints} Hit Points. ${fleet[4].status}</li>
+                                <li>Defence Ship: ${fleet[5].hitPoints} Hit Points. ${fleet[5].status}</li>
+                                <li>Attack Ship: ${fleet[6].hitPoints} Hit Points. ${fleet[6].status}</li>
+                                <li>Attack Ship: ${fleet[7].hitPoints} Hit Points. ${fleet[7].status}</li>
+                                <li>Attack Ship: ${fleet[8].hitPoints} Hit Points. ${fleet[8].status}</li>
+                                <li>Attack Ship: ${fleet[9].hitPoints} Hit Points. ${fleet[9].status}</li>
+                                <li>Attack Ship: ${fleet[10].hitPoints} Hit Points. ${fleet[10].status}</li>
+                                <li>Attack Ship: ${fleet[11].hitPoints} Hit Points. ${fleet[11].status}</li>
+                                <li>Attack Ship: ${fleet[12].hitPoints} Hit Points. ${fleet[12].status}</li>
+                                <li>Attack Ship: ${fleet[13].hitPoints} Hit Points. ${fleet[13].status}</li>`;
+    }
+    
+    
+    let fleet = [];
+    gameStart();
+    </script>
+</html>
